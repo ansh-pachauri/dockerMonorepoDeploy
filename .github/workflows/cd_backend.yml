@@ -22,7 +22,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-         context: ./docker
+         context: .
          file: ./docker/Dockerfile.backend
          push: true
          tags: ansh609/monorepodeploy:backend-${{ github.sha }}
