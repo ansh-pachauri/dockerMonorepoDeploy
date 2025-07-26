@@ -5,10 +5,10 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/users', (req, res) => {
+app.get('/users', async(req, res) => {
 
     try{
-        const user = prisma.user.findMany();
+        const user =await prisma.user.findMany();
         res.status(200).json(user);
     }
     catch(err){
@@ -18,7 +18,7 @@ app.get('/users', (req, res) => {
 });
 
 
-app.post("/user", (req, res) => {
+app.post("/user", async(req, res) => {
   const { username, password } = req.body;
   
   if (!username || !password) {
@@ -27,12 +27,15 @@ app.post("/user", (req, res) => {
   }
 
   try{
-    const user =prisma.user.create({
+    const user = await prisma.user.create({
         data:{
             username,
             password
         }
     })
+    if(user){
+        res.status(200).json({ message: "User created successfully" });
+    }
 
   }catch(err){
     res.status(500).json({ err });
@@ -41,4 +44,6 @@ app.post("/user", (req, res) => {
   
 })
 
-app.listen(8080);
+app.listen(8080, ()=>{
+    console.log("Server is running on port 8080");
+});

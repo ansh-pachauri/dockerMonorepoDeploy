@@ -1,0 +1,22 @@
+FROM oven/bun:1
+
+WORKDIR /usr/src/app
+
+ARG DATABASE_URL
+
+COPY ./packages ./packages
+COPY ./bun.lock ./bun.lock
+
+COPY ./packages.json ./packages.json
+COPY ./turbo.json ./turbo.json
+
+COPY ./apps/web ./apps/web
+
+
+RUN bun install
+RUN bun run db:generate
+RUN DATABASE_URL=${DATABASE_URL} bun run build
+# we introduce a build arg to pass the database url to the frontend so that we can  protect it from getting exposed in the docker image and github
+EXPOSE 3000
+
+CMD ["bun", "run", "start:web"]
